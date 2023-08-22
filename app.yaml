@@ -2,3 +2,8 @@ app:
   #启动端口
   port: 80
   security: 1qaz2wsx@2023
+  default:
+    host: 176.10.1.189
+    port: 22
+    user: kingschan
+    psw: kingschan

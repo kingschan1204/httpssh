@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"bytes"
 	"golang.org/x/crypto/ssh"
 	"log"
 	"os"
@@ -27,9 +27,41 @@ func sshConn(host, port, user, psw string) (*ssh.Client, error) {
 	// 连接SSH服务器
 	conn, err := ssh.Dial("tcp", host+":"+port, config)
 	if err != nil {
-		fmt.Println("Failed to dial: ", err.Error())
+		logConn.Println("Failed to dial: ", err.Error())
 		return nil, err
 	}
 	//defer conn.Close()
 	return conn, nil
+}
+
+// 执行命令
+func executeCmd(host, port, user, psw, cmd string) (*bytes.Buffer, error) {
+	// 连接SSH服务器
+	conn, err := sshConn(host, port, user, psw)
+	if err != nil {
+		return nil, err
+	}
+	defer conn.Close()
+
+	// 创建一个新的会话
+	session, err := conn.NewSession()
+	if err != nil {
+		return nil, err
+	}
+	defer session.Close()
+
+	// 将命令输出重定向到标准输出
+	//session.Stdout = os.Stdout
+	//session.Stderr = os.Stderr
+
+	// 创建一个缓冲区来捕获命令输出
+	var stdoutBuf bytes.Buffer
+	session.Stdout = &stdoutBuf
+
+	// 执行远程命令
+	err = session.Run(cmd)
+	if err != nil {
+		return nil, err
+	}
+	return &stdoutBuf, nil
 }

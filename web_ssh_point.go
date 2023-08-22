@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"io"
+	"io/ioutil"
 	"net/http"
 )
 
@@ -54,4 +55,27 @@ func webssh(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	io.Copy(w, &stdoutBuf)
 
+}
+
+// 用默认配置执行
+func webSshDef(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "bad request!", http.StatusBadRequest)
+		return
+	}
+	host := Config.Default.Host
+	port := Config.Default.Port
+	user := Config.Default.User
+	psw := Config.Default.Psw
+	// 准备执行的远程命令
+	cmd, _ := ioutil.ReadAll(r.Body)
+	stdoutBuf, err := executeCmd(host, port, user, psw, string(cmd))
+	if err != nil {
+		http.Error(w, "Failed to run: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+	// 将缓冲区内容作为HTTP响应发送回客户端
+	w.Header().Set("Content-Type", "text/plain")
+	w.WriteHeader(http.StatusOK)
+	io.Copy(w, stdoutBuf)
 }

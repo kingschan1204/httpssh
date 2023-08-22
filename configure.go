@@ -7,14 +7,21 @@ import (
 	"log"
 )
 
+type Yaml struct {
+	App appConfig `yaml:"app"`
+}
+
 type appConfig struct {
 	Port     string `yaml:"port"`     // bind port
 	Security string `yaml:"security"` // http token
-
+	Default  *def   `yaml:def`        // default sever seting
 }
 
-type Yaml struct {
-	App appConfig `yaml:"app"`
+type def struct {
+	Host string `yaml:"host"` // host
+	Port string `yaml:"port"` // port
+	User string `yaml:"user"` // user
+	Psw  string `yaml:"psw"`  // psw
 }
 
 ////////////////////////////////////////////////////////

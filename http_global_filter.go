@@ -9,10 +9,11 @@ import (
 func Handler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("url:", r.URL.Path, " RequestURI:", r.RequestURI)
 	urlMap := map[string]http.HandlerFunc{
-		"/hs/fu": uploadHandler,
-		"/hs/fd": downloadHandler,
-		"/hs/se": webssh,
-		"/hs/su": sshUpload,
+		"/hs/fu":     uploadHandler,
+		"/hs/fd":     downloadHandler,
+		"/hs/se":     webssh,
+		"/hs/su":     sshUpload,
+		"/hs/def/se": webSshDef,
 	}
 	doHandle, exists := urlMap[r.URL.Path]
 	if exists {
