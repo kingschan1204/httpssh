@@ -5,16 +5,22 @@ import (
 	"net/http"
 )
 
-// 路由
-func Handler(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("url:", r.URL.Path, " RequestURI:", r.RequestURI)
-	urlMap := map[string]http.HandlerFunc{
+var urlMap map[string]http.HandlerFunc
+
+func init() {
+	//路由映射
+	urlMap = map[string]http.HandlerFunc{
 		"/hs/fu":     uploadHandler,
 		"/hs/fd":     downloadHandler,
 		"/hs/se":     webssh,
 		"/hs/su":     sshUpload,
 		"/hs/def/se": webSshDef,
 	}
+}
+
+// 路由
+func Handler(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("url:", r.URL.Path, " RequestURI:", r.RequestURI)
 	doHandle, exists := urlMap[r.URL.Path]
 	if exists {
 		doHandle(w, r)
