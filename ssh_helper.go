@@ -7,7 +7,7 @@ import (
 	"os"
 )
 
-var logConn = log.New(os.Stdout, "sshConn:", log.Llongfile|log.LstdFlags)
+var logConn = log.New(os.Stdout, "sshConn:", log.LstdFlags)
 
 // 创建ssh连接
 func sshConn(host, port, user, psw string) (*ssh.Client, error) {
